@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Global styles for the entire page */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #00FFFF;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      
+    }
+
+    /* Center align the header and give it some margin */
+    h1 {
+      color: #333;
+      margin: 20px 0;
+      font-size: 24px;
+    }
+
+    /* Style the logout link */
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Style for the chat container */
+    .chat__container {
+      max-width: 600px;
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 80vh; /* Set a fixed height for the chat container */
+      position: relative;
+    }
+
+    /* Style the input field and send button container */
+    .chat__input__container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Style the input field */
+    #id_message_send_input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    /* Style the send button */
+    #id_message_send_button {
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: flex-end; /* Align button to the end of the flex container */
+    }
+
+    #id_message_send_button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Style the chat messages container */
+    #id_chat_item_container {
+      flex: 1; /* Take up remaining space */
+      overflow-y: auto;
+      padding: 10px;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      background-color: #f8f9fa;
+      margin-bottom: 20px; /* Space for the input container */
+    }
+
+    /* Style individual chat messages */
+    #id_chat_item_container div {
+      padding: 12px;
+      border-bottom: 1px solid #e9ecef;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      background-color: #ffffff;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .chat__input__container {
+        gap: 5px;
+      }
+
+      #id_message_send_input {
+        margin-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <center><h1>Hello, Welcome to my chat site! {{request.user}}</h1></center>
+  <br>
+  {% if request.user.is_authenticated %}
+  <center>Logout the chat Page <a href="{% url 'logout-user' %}">Logout</a></center>
+  {% endif %}
+  <div class="chat__container">
+    <div id="id_chat_item_container">
+      <!-- Chat messages will be appended here -->
+    </div>
+    <div class="chat__input__container">
+      <input type="text" id="id_message_send_input" />
+      <button type="submit" id="id_message_send_button">Send Message</button>
+    </div>
+  </div>
+  <script>
+    const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+    chatSocket.onopen = function (e) {
+      console.log("The connection was setup successfully!");
+    };
+    chatSocket.onclose = function (e) {
+      console.log("Something unexpected happened!");
+    };
+    document.querySelector("#id_message_send_input").focus();
+    document.querySelector("#id_message_send_input").onkeyup = function (e) {
+      if (e.keyCode == 13) {
+        document.querySelector("#id_message_send_button").click();
+      }
+    };
+    document.querySelector("#id_message_send_button").onclick = function (e) {
+      var messageInput = document.querySelector("#id_message_send_input").value;
+      chatSocket.send(JSON.stringify({ message: messageInput, username: "{{request.user.username}}" }));
+    };
+    chatSocket.onmessage = function (e) {
+      const data = JSON.parse(e.data);
+      var div = document.createElement("div");
+      div.innerHTML = data.username + " : " + data.message;
+      document.querySelector("#id_message_send_input").value = "";
+      document.querySelector("#id_chat_item_container").appendChild(div);
+      // Scroll to the bottom of the chat messages
+      document.querySelector("#id_chat_item_container").scrollTop = document.querySelector("#id_chat_item_container").scrollHeight;
+    };
+  </script>
+</body>
+</html>

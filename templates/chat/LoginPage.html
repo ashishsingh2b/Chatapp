@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Global styles for the entire page */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #00FFFF;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      
+    }
+
+    /* Center align the form and add styling */
+    form {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 360px;
+      width: 100%;
+      margin: 20px;
+    }
+
+    /* Style the form elements */
+    form p {
+      margin: 0 0 20px;
+    }
+
+    /* Style the form labels */
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    /* Style the form inputs */
+    form input[type="text"],
+    form input[type="password"],
+    form input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 18px;
+      box-sizing: border-box; /* Ensure padding and border are included in the total width */
+    }
+
+    /* Style the submit button */
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    /* Add spacing and center the container */
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+    
+  <div class="container">
+    
+    <form method="post">
+        <h1>LogIn</h1>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <br>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
